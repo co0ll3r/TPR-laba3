@@ -23,12 +23,13 @@ void dynprFunc(int** TableOfRoutes, int Size){
 	std::vector<int> LeftIndexes, RightIndexes;
 	std::set<int> Mixer;
 	RightIndexes.push_back(Iteration);
-
+	int OptReshLength = 0;
 	int counter = 6; // отвечает за крайний левый индекс для стд =3, для ленты = 6
 	while (RightIndexes.size() != 0) // МБ КОГДА НЕТ ПРАВЫХ вершин
-//	for (int Gl = 0; Gl < 5; Gl++)
+		/* Левые индексы являются входными для правых индексов, в конце каждой итерации левый индексы становятся правыми */
 	{
 		LeftIndexes.clear();
+		// тут ищем левые индесы, которые являются входными для правых
 		for(unsigned k = 0; k < RightIndexes.size(); k++)
 			for(int i = 0; i < Size; i++) // ищем входяшие вершины
 				if (TableOfRoutes[i][RightIndexes[k]] != 0 && Iteration > i)
@@ -40,22 +41,25 @@ void dynprFunc(int** TableOfRoutes, int Size){
 		LeftIndexes.assign(Mixer.begin(), Mixer.end());
 		Mixer.clear();
 
-		int OptReshLength = 1;
 		std::cout << " x" << counter << " | d(x" << counter << ", x" << counter + 1 << ")  ";
-		std::cout << std::setw(OptReshLength * 13) << " ";
+		std::cout << std::setw(OptReshLength * 13) << "";
 	        std::cout << "| Оптимальное решение \n"; 
 		std::cout << std::setw(4) << " " << "|";	
-		for(unsigned i = 0; i < RightIndexes.size(); i++){
+/*		for(unsigned i = 0; i < RightIndexes.size(); i++)  // Обратный порядок вывода индексов
 			std::cout << std::setw(5) << "X" << counter + 1 << "=" << RightIndexes[i] + 1 << std::setw(5) << "|";
-		}
+*/		 
+		for (int i = RightIndexes.size() - 1; i >= 0; i--)
+			std::cout << std::setw(5) << "X" << counter + 1 << "=" << RightIndexes[i] + 1 << std::setw(5) << "|";
+
 		std::cout << "f" << counter << "(x" << counter << ")| " << "x" << counter + 1 << "*\n";
 //		std::cout << std::setfill('-') << std::setw(40) << "\n";	
 //		std::cout << std::setfill(' ');
 		std::string OUT;
 		for (unsigned i = 0; i < LeftIndexes.size(); i++) {
 			std::cout << "  " << LeftIndexes[i] + 1 << " |";
-			OptReshLength = LeftIndexes.size();
-			for (unsigned k = 0; k < RightIndexes.size(); k++){
+			OptReshLength = LeftIndexes.size() - 1; // вычисляем для отсупа в 45 строке
+//			for (unsigned k = 0; k < RightIndexes.size(); k++){ // Обратный порядок обработки правых индексов, то есть с конца
+			for (int k = RightIndexes.size() - 1; k >= 0; k--){
 				if (TableOfRoutes[RightIndexes[k]][LeftIndexes[i]] == 0){
 					OUT = " no_route   |";
 					std::cout << std::setw(13) << OUT;
@@ -101,7 +105,7 @@ void dynprFunc(int** TableOfRoutes, int Size){
 
 	/* это вывод оптимального маршрута */
 	int k = 0, now = VectorOfVertex[k].pastVertexIndex;
-	std::cout << "1 -> ";
+	std::cout << "Оптимальный маршрут:\n1 -> ";
 	while (now + 1 != 7){
 		std::cout << now + 1 << " -> ";
 		k = now;
