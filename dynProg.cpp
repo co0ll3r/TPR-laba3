@@ -60,6 +60,19 @@ void dynprFunc(int** TableOfRoutes, int Size){
 			OptReshLength = LeftIndexes.size() - 1; // вычисляем для отсупа в 45 строке
 //			for (unsigned k = 0; k < RightIndexes.size(); k++){ // Обратный порядок обработки правых индексов, то есть с конца
 			for (int k = RightIndexes.size() - 1; k >= 0; k--){
+
+				if (VectorOfVertex[RightIndexes[k]].weight + TableOfRoutes[RightIndexes[k]][LeftIndexes[i]] <
+						VectorOfVertex[LeftIndexes[i]].weight && TableOfRoutes[LeftIndexes[i]][RightIndexes[k]] != 0
+				   ) // если путь + правая вершина < левая вершина, то замена 
+				{
+					VectorOfVertex[LeftIndexes[i]].weight = VectorOfVertex[RightIndexes[k]].weight + TableOfRoutes[RightIndexes[k]][LeftIndexes[i]];
+					VectorOfVertex[LeftIndexes[i]].pastVertexIndex = RightIndexes[k];
+				}
+				if (RightIndexes[k] == LeftIndexes[i]){
+					OUT = std::to_string(VectorOfVertex[RightIndexes[k]].weight) + "   |";
+					std::cout << std::setw(13) << OUT ;
+				}
+				else
 				if (TableOfRoutes[RightIndexes[k]][LeftIndexes[i]] == 0){
 					OUT = " no_route   |";
 					std::cout << std::setw(13) << OUT;
@@ -71,13 +84,7 @@ void dynprFunc(int** TableOfRoutes, int Size){
 						  + TableOfRoutes[RightIndexes[k]][LeftIndexes[i]]) + "  |";
 					std::cout << std::setw(13) << OUT;
 				}
-				if (VectorOfVertex[RightIndexes[k]].weight + TableOfRoutes[RightIndexes[k]][LeftIndexes[i]] <
-						VectorOfVertex[LeftIndexes[i]].weight && TableOfRoutes[LeftIndexes[i]][RightIndexes[k]] != 0
-				   ) // если путь + правая вершина < левая вершина, то замена 
-				{
-					VectorOfVertex[LeftIndexes[i]].weight = VectorOfVertex[RightIndexes[k]].weight + TableOfRoutes[RightIndexes[k]][LeftIndexes[i]];
-					VectorOfVertex[LeftIndexes[i]].pastVertexIndex = RightIndexes[k];
-				}
+				
 			}
 			std::cout << std::setw(5) << VectorOfVertex[LeftIndexes[i]].weight << " | " 
 				<< VectorOfVertex[LeftIndexes[i]].pastVertexIndex + 1 << "\n";
